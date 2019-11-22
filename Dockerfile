@@ -29,6 +29,5 @@ RUN chmod -R 0775 /ha-bridge-scripts && \
     chmod -R 0776 /config && \
     chown -R nobody:users /config
 
-USER nobody
 VOLUME ["/config/data"]
 ENTRYPOINT /ha-bridge-scripts/new_entrypoint

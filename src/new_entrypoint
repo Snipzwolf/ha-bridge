@@ -1,10 +1,35 @@
-#!/bin/bash
+#!/usr/bin/env bash
+EXTRA_SCRIPT="";
+USERNAME=${USERNAME:-"nobody"};
+GROUPNAME=${GROUPNAME:-"users"};
+
+while getopts s: option
+do
+ case "${option}"
+ in
+ s) EXTRA_SCRIPT=${OPTARG};;
+ esac
+done
+
+if [ -f "$EXTRA_SCRIPT" ]; then
+	bash $EXTRA_SCRIPT;
+fi
+
+
+if [[ -v UID ] && [ -v GID ]];
+then
+  id -g $GROUPNAME &>/dev/null || (groupadd -r $GROUPNAME -g $GID && echo "Created group $GROUPNAME:$GID");
+  id -u $USERNAME &>/dev/null || (useradd $USERNAME -rMN -u $UID -g $GID && echo "Created user $USERNAME:$UID");
+fi
+
 ls -lah /config /config/startup-config /config/data
 
 if [ -f /config/startup-config/habridge.config ]; then
   echo -e "Copy over config"
   cp /config/startup-config/* /config/data/
 fi
+
+su $USERNAME;
 
 ADDPARAM="-Dupnp.config.address=$SERVERIP -Dserver.port=$SERVERPORT"
 echo -e "Parameters used:\nServer IP : $SERVERIP\nServer Port : $SERVERPORT"
