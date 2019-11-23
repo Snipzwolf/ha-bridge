@@ -22,19 +22,16 @@ if [ ! -z $UID ] && [ ! -z $GID ]; then
   chown -Rf $UID:$GID /config || true;
 fi
 
-ls -lah /config /config/startup-config /config/data
-
-echo "Changing User";
-
-su $USERNAME;
+ls -lah /config /config/startup-config /config/data;
 
 if [ -f /config/startup-config/habridge.config ]; then
-  echo -e "Copy over config"
-  cp /config/startup-config/* /config/data/
+  echo -e "Copy over config";
+  cp /config/startup-config/* /config/data/;
+  chown -Rf $USERNAME:$GROUPNAME /config/data/;
 fi
 
 ADDPARAM="-Dupnp.config.address=$SERVERIP -Dserver.port=$SERVERPORT"
 echo -e "Parameters used:\nServer IP : $SERVERIP\nServer Port : $SERVERPORT"
 
 echo "Starting Home Automation Bridge"
-/usr/bin/java -jar $ADDPARAM ha-bridge.jar 2>&1;
+su -c "/usr/bin/java -jar $ADDPARAM ha-bridge.jar 2>&1;" $USERNAME < /dev/null;
