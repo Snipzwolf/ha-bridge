@@ -23,7 +23,7 @@ RUN wget -q -O ./ha-bridge.jar https://github.com/bwssytems/ha-bridge/releases/d
     mkdir /config/startup-config/
 
 RUN whereis -b java && \
-    setcap 'cap_net_bind_service=+ep' /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    setcap 'cap_net_bind_service=+ep' $(readlink -f `which java`)
 
 RUN chmod -R 0775 /ha-bridge-scripts && \
     chmod -R 0776 /config && \
